@@ -23,7 +23,7 @@ router.post('/', async (req, res, next) => {
     });
 
     return res.status(201).send();
-  } catch(e) {
+  } catch (e) {
     if (e.errorInfo) next(getError(e.errorInfo.code));
     else next();
     return;

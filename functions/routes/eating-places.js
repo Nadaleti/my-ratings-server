@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/', async (req, res, next) => {
   const { category, name } = req.query;
   const docs = await getEatingPlaces(category, name);
-  const eatingPlaces = docs.map(doc => {
+  const eatingPlaces = docs.map((doc) => {
     return {
       id: doc.id,
       ...doc.data()
@@ -35,7 +35,7 @@ router.post('/', async (req, res, next) => {
   }
 
   await db.collection('eating-places').doc().create({
-    ... req.body,
+    ...req.body,
     addresses: req.body.hasOwnProperty('addresses') ? req.body.addresses : [],
     category: req.body.category.toUpperCase(),
   });
@@ -51,7 +51,7 @@ router.put('/:id', async (req, res, next) => {
   try {
     await db.collection('eating-places').doc(req.params.id).update({...req.body});
     return res.status(202).send();
-  } catch(e) {
+  } catch (e) {
     return next(handleFirestoreError(e.code));
   }
 });
@@ -64,8 +64,8 @@ router.delete('/:id', async (req, res, next) => {
 const getEatingPlaces = async (category, name) => {
   let query = db.collection('eating-places').orderBy('name', 'asc');
 
-  if (!!name) query = query.startAt(name).endAt(name + '\uf8ff');
-  if (!!category) query = query.where('category', '==', category);
+  if (name) query = query.startAt(name).endAt(name + '\uf8ff');
+  if (category) query = query.where('category', '==', category);
 
   return (await query.get()).docs;
 }
