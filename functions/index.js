@@ -8,7 +8,6 @@ const dbUrl = process.env.MONGO_DB_CONNECTION_STRING;
 mongoose.connect(dbUrl, { useNewUrlParser: true });
 mongoose.set('useFindAndModify', false);
 
-const { isAuthenticated } = require('./middlewares/authentication');
 const eatingPlacesRouter = require('./routes/eating-places');
 const ratingsRouter = require('./routes/ratings');
 const usersRouter = require('./routes/users');
@@ -19,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/eating-places', eatingPlacesRouter.routes);
-app.use('/api/ratings', isAuthenticated, ratingsRouter.routes);
+app.use('/api/ratings', ratingsRouter.routes);
 app.use('/api/users', usersRouter.routes);
 app.all('*', (_, __, next) => next({ status: 404, message: 'Not found', code: 'PATH_NOT_FOUND' }));
 app.use((error, _, res) => {

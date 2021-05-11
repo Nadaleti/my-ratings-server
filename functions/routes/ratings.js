@@ -1,6 +1,7 @@
 const express = require('express');
 const { hasRequiredFields, isValueBetween } = require('../request-validators');
 const { handleNotFound, handleInvalidRating, handleMissingRequiredFields } = require('../handlers');
+const { isAuthenticated } = require('../middlewares/authentication');
 const EatingPlace = require('../models/EatingPlace');
 const Rating = require('../models/Rating');
 
@@ -27,7 +28,7 @@ router.get('/', async (req, res) => {
   });
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', isAuthenticated, async (req, res, next) => {
   if (!hasRequiredFields(req.body, 'placeId', 'rating')) {
     return next(handleMissingRequiredFields());
   }
@@ -55,7 +56,7 @@ router.post('/', async (req, res, next) => {
   return res.status(201).send();
 });
 
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', isAuthenticated, async (req, res, next) => {
   if (!isValueBetween(req.body.rating, 1, 5)) {
     return next(handleInvalidRating());
   }
@@ -80,7 +81,7 @@ router.put('/:id', async (req, res, next) => {
   return res.status(202).send();
 });
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', isAuthenticated, async (req, res, next) => {
   const rating = await Rating.findById(req.params.id).lean();
   if (!rating) {
     return next(handleNotFound('Rating not found'));
