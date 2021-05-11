@@ -20,6 +20,7 @@ module.exports = {
     'object-curly-spacing': 'off',
     'semi': 'off',
     'no-prototype-builtins': 'off',
-    'new-cap': 'off'
+    'new-cap': 'off',
+    'no-unused-vars': 'off'
   },
 };

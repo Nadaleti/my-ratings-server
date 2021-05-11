@@ -10,15 +10,8 @@ const handleInvalidRating = () => {
   return { status: 400, message: 'Rating should be between 1 and 5', code: 'INVALID_RATING_ERROR' };
 }
 
-const handleFirestoreError = (code) => {
-  if (code == 5) {
-    return handleNotFound('Document not found');
-  }
-}
-
 module.exports = {
   handleNotFound,
   handleInvalidRating,
-  handleFirestoreError,
   handleMissingRequiredFields
 }
