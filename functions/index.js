@@ -3,7 +3,6 @@ const functions = require('firebase-functions');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const express = require('express');
-const { isApiKeyAuthenticated } = require('./middlewares/authentication');
 
 const dbUrl = process.env.MONGO_DB_CONNECTION_STRING;
 mongoose.connect(dbUrl, { useNewUrlParser: true });
@@ -22,7 +21,7 @@ app.use(express.json());
 app.use('/api/eating-places', eatingPlacesRouter.routes);
 app.use('/api/ratings', ratingsRouter.routes);
 app.use('/api/users', usersRouter.routes);
-app.use('/api/categories', isApiKeyAuthenticated, categoriesRouter.routes);
+app.use('/api/categories', categoriesRouter.routes);
 app.all('*', (_, __, next) => next({ status: 404, message: 'Not found', code: 'PATH_NOT_FOUND' }));
 
 app.use((error, _, res, __) => {

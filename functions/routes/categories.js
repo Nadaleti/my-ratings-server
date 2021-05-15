@@ -2,6 +2,7 @@ const express = require('express');
 const { hasRequiredFields } = require('../request-validators');
 const { handleNotFound, handleMissingRequiredFields } = require('../handlers');
 const iconProviders = require('../constants/icon-providers.const');
+const { isApiKeyAuthenticated } = require('../middlewares/authentication');
 const Category = require('../models/Category');
 
 const router = express.Router();
@@ -18,7 +19,7 @@ router.get('/', async (_, res) => {
 
 router.get('/icon/providers', (_, res) => res.status(200).send(iconProviders))
 
-router.post('/', async (req, res, next) => {
+router.post('/', isApiKeyAuthenticated, async (req, res, next) => {
   if (!hasRequiredFields(req.body, 'name', 'code', 'iconName', 'iconProvider')) {
     return next(handleMissingRequiredFields());
   }
@@ -43,7 +44,7 @@ router.post('/', async (req, res, next) => {
   return res.status(201).send();
 });
 
-router.put('/:code', async (req, res, next) => {
+router.put('/:code', isApiKeyAuthenticated, async (req, res, next) => {
   if (!hasRequiredFields(req.body, 'name', 'iconName', 'iconProvider')) {
     return next(handleMissingRequiredFields());
   }
@@ -59,7 +60,7 @@ router.put('/:code', async (req, res, next) => {
   return res.status(202).send();
 });
 
-router.delete('/:code', async (req, res, next) => {
+router.delete('/:code', isApiKeyAuthenticated, async (req, res, next) => {
   const existingCategory = await Category.findOne({ code: req.params.code });
   if (!existingCategory) return next(handleNotFound());
 
