@@ -63,8 +63,9 @@ router.put('/:id', isFirebaseAuthenticated, async (req, res, next) => {
 
   const rating = await Rating.findById(req.params.id).lean();
   if (!rating) return next(handleNotFound('Rating not found'));
-  if (rating.userId !== req.headers.uid) 
+  if (rating.userId !== req.headers.uid) {
     return next({ status: 403, message: 'It\'s not allowed to edit other users ratings', code: 'DIFF_USER_RATING_ERROR' });
+  }
 
   if (req.body.rating !== rating.rating || req.body.comment !== rating.comment, req.body.title !== rating.title) {
     await Rating.findByIdAndUpdate(req.params.id, {
@@ -81,8 +82,9 @@ router.delete('/:id', isFirebaseAuthenticated, async (req, res, next) => {
   const rating = await Rating.findById(req.params.id).lean();
   if (!rating) return next(handleNotFound('Rating not found'));
 
-  if (rating.userId !== req.headers.uid)
+  if (rating.userId !== req.headers.uid) {
     return next({ status: 403, message: 'It\'s not allowed to edit other users ratings', code: 'DIFF_USER_RATING_ERROR' });
+  }
 
   await Rating.deleteOne('_id', req.params.id);
   return res.status(204).send();
