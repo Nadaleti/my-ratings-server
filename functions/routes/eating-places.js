@@ -72,7 +72,7 @@ const getEatingPlaces = async (page, pageSize, category, name) => {
   if (name) query['name'] = { $regex: '.*' + name + '.*' };
   if (category) query['category'] = category;
 
-  return await EatingPlace.paginate(query, { page, limit: pageSize });
+  return await EatingPlace.paginate(query, { page, limit: pageSize, sort: 'name' });
 }
 
 exports.routes = router;
