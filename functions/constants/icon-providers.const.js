@@ -1,7 +1,9 @@
-export const iconProviders = [
+const iconProviders = [
   'ANT_DESIGN', 'BOOTSTRAP', 'BOX', 'DEVICONS',
   'FEATHER', 'FLAT_COLOR', 'FONT_AWESOME', 'GAME_ICONS',
   'GITHUB_OCTICONS', 'GROMMET', 'HEROICONS', 'ICOMOON',
   'IONICONS', 'IONICONS_5', 'MATERIAL', 'REMIX', 'SIMPLE',
   'TYPICONS', 'VS_CODE', 'WEATHER', 'CSS_GG'
-];
+]
+
+module.exports = iconProviders;

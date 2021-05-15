@@ -1,7 +1,7 @@
 const express = require('express');
 const { hasRequiredFields } = require('../request-validators');
 const { handleNotFound, handleMissingRequiredFields } = require('../handlers');
-const { isAuthenticated } = require('../middlewares/authentication');
+const { isFirebaseAuthenticated } = require('../middlewares/authentication');
 const EatingPlace = require('../models/EatingPlace');
 
 const router = express.Router();
@@ -32,7 +32,7 @@ router.get('/:id', async (req, res, next) => {
   return res.status(200).send(eatingPlaceMapper(doc));
 });
 
-router.post('/', isAuthenticated, async (req, res, next) => {
+router.post('/', isFirebaseAuthenticated, async (req, res, next) => {
   if (!hasRequiredFields(req.body, 'name', 'category', 'cost')) {
     return next(handleMissingRequiredFields());
   }
@@ -47,7 +47,7 @@ router.post('/', isAuthenticated, async (req, res, next) => {
   return res.status(201).send();
 });
 
-router.put('/:id', isAuthenticated, async (req, res, next) => {
+router.put('/:id', isFirebaseAuthenticated, async (req, res, next) => {
   if (!hasRequiredFields(req.body, 'name', 'category', 'cost', 'addresses')) {
     return next(handleMissingRequiredFields());
   }
@@ -56,7 +56,7 @@ router.put('/:id', isAuthenticated, async (req, res, next) => {
   return res.status(202).send();
 });
 
-router.delete('/:id', isAuthenticated, async (req, res) => {
+router.delete('/:id', isFirebaseAuthenticated, async (req, res) => {
   await EatingPlace.deleteOne({ '_id': req.params.id });
   return res.status(204).send();
 });

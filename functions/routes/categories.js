@@ -6,25 +6,31 @@ const Category = require('../models/Category');
 
 const router = express.Router();
 
-router.get("/", (_, res) => {
+router.get('/', async (_, res) => {
   const categories = await Category.find().sort('name');
   const categoriesResponse = categories.map((category) => {
-    const { _id, ...rest } = category;
+    const { _id, __v, ...rest } = category._doc;
     return { id: _id, ...rest};
   });
 
   return res.status(200).send({ categories: categoriesResponse });
 });
 
-router.post("/", (req, res, next) => {
+router.get('/icon/providers', (_, res) => res.status(200).send(iconProviders))
+
+router.post('/', async (req, res, next) => {
   if (!hasRequiredFields(req.body, 'name', 'code', 'iconName', 'iconProvider')) {
     return next(handleMissingRequiredFields());
   }
-  
-  if (!iconProviders.includes(req.body.iconProvider)) return next({ status: 400, message: `Icon provider ${req.body.iconProvider} is not valid`, code: 'BAD_REQUEST_ERROR' });
 
-  const existingCategory = await Category.find({ code: req.body.code });
-  if (existingCategory) return next({ status: 409, message: `Category ${req.body.code} already exists`, code: 'DUPLICATED_CATEGORY_ERROR' });
+  if (!iconProviders.includes(req.body.iconProvider)) {
+    return next({ status: 400, message: `Icon provider ${req.body.iconProvider} is not valid`, code: 'BAD_REQUEST_ERROR' });
+  }
+
+  const existingCategory = await Category.findOne({ code: req.body.code });
+  if (existingCategory) {
+    return next({ status: 409, message: `Category ${req.body.code} already exists`, code: 'DUPLICATED_CATEGORY_ERROR' });
+  }
 
   const category = new Category({
     name: req.body.name,
@@ -32,31 +38,33 @@ router.post("/", (req, res, next) => {
     iconName: req.body.iconName,
     iconProvider: req.body.iconProvider
   });
-  
+
   await category.save();
-  return res.status(201);
+  return res.status(201).send();
 });
 
-router.put("/:code", (req, res, next) => {
+router.put('/:code', async (req, res, next) => {
   if (!hasRequiredFields(req.body, 'name', 'iconName', 'iconProvider')) {
     return next(handleMissingRequiredFields());
   }
 
-  if (!iconProviders.includes(req.body.iconProvider)) return next({ status: 400, message: `Icon provider ${req.body.iconProvider} is not valid`, code: 'BAD_REQUEST_ERROR' });
+  if (!iconProviders.includes(req.body.iconProvider)) {
+    return next({ status: 400, message: `Icon provider ${req.body.iconProvider} is not valid`, code: 'BAD_REQUEST_ERROR' });
+  }
 
-  const existingCategory = await Category.find({ code: req.params.code });
+  const existingCategory = await Category.findOne({ code: req.params.code });
   if (!existingCategory) return next(handleNotFound());
 
-  await Category.findOneAndUpdate(existingCategory._id, { ...req.body });
-  return res.status(202);
+  await Category.findOneAndUpdate({ code: req.params.code }, { ...req.body });
+  return res.status(202).send();
 });
 
-router.delete("/:code", (req, res, next) => {
-  const existingCategory = await Category.find({ code: req.params.code });
+router.delete('/:code', async (req, res, next) => {
+  const existingCategory = await Category.findOne({ code: req.params.code });
   if (!existingCategory) return next(handleNotFound());
 
-  await Category.deleteOne('code', req.params.code);
-  return res.status(204);
+  await Category.deleteOne({ 'code': req.params.code });
+  return res.status(204).send();
 });
 
 exports.routes = router;
