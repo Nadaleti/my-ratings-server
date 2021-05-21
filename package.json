@@ -1,0 +1,25 @@
+{
+  "name": "my-ratings-server",
+  "description": "Server for my-ratings project",
+  "scripts": {
+    "lint": "eslint .",
+    "start": "node ./index.js"
+  },
+  "engines": {
+    "node": "12"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^9.0.2",
+    "express": "^4.17.1",
+    "firebase-admin": "^9.2.0",
+    "mongoose": "^5.12.8",
+    "mongoose-paginate-v2": "^1.3.17"
+  },
+  "devDependencies": {
+    "eslint": "^7.24.0",
+    "eslint-config-eslint": "^7.0.0"
+  },
+  "private": true
+}

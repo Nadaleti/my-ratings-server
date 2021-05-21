@@ -1,5 +1,4 @@
 require('dotenv').config();
-const functions = require('firebase-functions');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const express = require('express');
@@ -31,4 +30,4 @@ app.use((error, _, res, __) => {
   })
 });
 
-exports.app = functions.https.onRequest(app);
+app.listen(3333, () => console.log('App is up and running!'));
