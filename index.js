@@ -4,8 +4,6 @@ const mongoose = require('mongoose');
 const express = require('express');
 
 const dbUrl = process.env.MONGO_DB_CONNECTION_STRING;
-mongoose.connect(dbUrl, { useNewUrlParser: true });
-mongoose.set('useFindAndModify', false);
 
 const eatingPlacesRouter = require('./routes/eating-places');
 const ratingsRouter = require('./routes/ratings');
@@ -30,4 +28,7 @@ app.use((error, _, res, __) => {
   })
 });
 
-app.listen(process.env.PORT || 3333, () => console.log('App is up and running!'));
+mongoose.set('useFindAndModify', false);
+mongoose.connect(dbUrl, { useNewUrlParser: true })
+  .then(() => app.listen(process.env.PORT || 3333, () => console.log('App is up and running!')))
+  .catch(error => console.error(error));
