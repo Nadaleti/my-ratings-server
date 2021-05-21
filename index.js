@@ -30,4 +30,4 @@ app.use((error, _, res, __) => {
   })
 });
 
-app.listen(3333, () => console.log('App is up and running!'));
+app.listen(process.env.PORT || 3333, () => console.log('App is up and running!'));
